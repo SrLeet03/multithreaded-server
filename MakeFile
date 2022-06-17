@@ -1,0 +1,17 @@
+
+CC = g++
+CFLAGS = -c
+
+all: tcpc
+
+tcpc: client.cpp
+	$(CC) $(CFLAGS) -o tcpc /client/tcpClient.cpp
+	
+output: main.o
+	g++ main.o -o output
+
+main.o: /client.tcpClient.cpp
+	g++ -c main.cpp
+
+clean:
+	rm -rf *.dSYM tcpc output
