@@ -13,6 +13,7 @@
 
 pthread_t thread_pool [THREAD_POOL_SIZE] ; 
 pthread_mutex_t mutex_lock  ; 
+pthread_cond_t thread_condition_var  = PTHREAD_COND_INITIALIZER ; 
 
 
 
@@ -116,6 +117,8 @@ int main(int identity, char **argv)
        pthread_mutex_lock(&mutex_lock) ; 
 
        client_connections.push(pclient);
+       
+       pthread_cond_signal(&thread_condition_var) ;
 
        pthread_mutex_unlock(&mutex_lock) ; 
 
@@ -201,11 +204,19 @@ void * handle_connection(int  *ptr_connfd){
 
 void * thread_function(void *arg){
 
+    // following will burn the cpu power caz although there is no any new connection 
+    //for the thread still ask if there any continuosl. To handle this problem we have to introduce condition variables.
+
+
     while (true)
     {
         if(client_connections.size() > 0){
 
             pthread_mutex_lock(&mutex_lock) ; 
+
+            pthread_cond_wait(&thread_condition_var , &mutex_lock) ; 
+            //here we passed the lock since since condition varables and lock work closely. asa thread wait
+            // it will releases the lock
 
             int* front_client =  client_connections.front() ; 
             client_connections.pop() ; 
