@@ -1,19 +1,30 @@
 #include "common.h"
 #include <bits/stdc++.h>
+#include <pthread.h>
+
+
+#define SERVER_BACKLOG 1 // maxm connections allowable in the server  waiting  queue.
 
 using namespace std;
 
 void error_and_kill(const char *fmt, ...);
 
+void * handle_connection(void *connfd) ;
+
 char *bin2hex(const unsigned char *input, size_t len);
+
+//compilation : g++ -o ./server/tcpServer ./server/tcpServer.cpp
+               //g++ -pthread -o ./server/tcpServer ./server/tcpServer.cpp (when there are threads using in the programme)
+               
+
+uint8_t buff[MAX_LENGHT + 1];
+uint8_t recvline[MAX_LENGHT + 1];
 
 int main(int identity, char **argv)
 {
 
-    int listenfd, connfd, n;
+    int listenfd, connfd, n , client_socket;
     struct sockaddr_in server_address;
-    uint8_t buff[MAX_LENGHT + 1];
-    uint8_t recvline[MAX_LENGHT + 1];
 
     int opt = 1;
 
@@ -44,7 +55,7 @@ int main(int identity, char **argv)
         error_and_kill("bind error");
     }
 
-    if (listen(listenfd, 10) < 0)
+    if (listen(listenfd, SERVER_BACKLOG) < 0)
     {
         error_and_kill("listening error");
     }
@@ -63,43 +74,22 @@ int main(int identity, char **argv)
         printf("waiting for conection on PORT : %d\n", SERVER_PORT);
 
         fflush(stdout);
-        connfd = accept(listenfd, (SA *) &client_addr, &client_addr_len);
+        client_socket = accept(listenfd, (SA *) &client_addr, &client_addr_len);
         
         inet_ntop(AF_INET , &client_addr , client_address ,MAX_LENGHT) ; 
-        printf("\n\nclient connection : %s\n" , client_address) ;
         //inet_ntop function takes the address into network (bytes) format and convert it into the
         //presentation format.
 
+        printf("\nclient connection : %s\n" , client_address) ;
 
-        // zero out the recive buffer to make it NULL terminated
+        // handle_connection(client_socket ) ; 
 
-        memset(recvline, 0, MAX_LENGHT);
+       // creating the threads
+       pthread_t t ; 
 
-        // now read the client's message
-
-        n = read(connfd, recvline, MAX_LENGHT - 1) ;
-        // while ((n = read(connfd, recvline, MAX_LENGHT - 1)) > 0)
-        // {
-        //     fprintf(stdout, "\n%s\n\n%s", bin2hex(recvline, n), recvline);
-
-        //     // detect end of message
-        //     if (recvline[n - 1] == '\n')
-        //     {
-        //         break;
-        //     }
-        //     memset(recvline, 0, MAX_LENGHT);
-        // }
-
-
-        if (n < 0)
-            error_and_kill("read error");
-        printf("below is from client--------------\n\n");
-        printf("%s\n", recvline);
-        // sending the response now
-        snprintf((char *)buff, sizeof(buff), "HTTP/1.0 200 OK \r\n\r\nHello there,Client!");
-
-        write(connfd, (char *)buff, strlen((char *)buff));
-        close(connfd);
+       int *pclient = new int() ; 
+       *pclient = client_socket ; 
+       pthread_create(&t , NULL , handle_connection , pclient) ;
     }
 
     shutdown(listenfd, SHUT_RDWR);
@@ -132,7 +122,49 @@ void error_and_kill(const char *ch, ...)
     exit(1);
 }
 
-void handle_connection(int client_socket){
-    char buffer[MAX_LENGHT+1]  ; 
-    
+
+void * handle_connection(void  *ptr_connfd){
+        // zero out the recive buffer to make it NULL terminated
+        
+        int connfd = *((int*)(ptr_connfd)) ; 
+        // conv(ptr_connfd , connfd) ; 
+
+        //We are casting it before deleting it.
+        delete[] (int*)ptr_connfd;
+
+        memset(recvline, 0, MAX_LENGHT);
+
+        // now read the client's message
+
+        int n = read(connfd, recvline, MAX_LENGHT - 1) ;
+        // while ((n = read(connfd, recvline, MAX_LENGHT - 1)) > 0)
+        // {
+        //     fprintf(stdout, "\n%s\n\n%s", bin2hex(recvline, n), recvline);
+
+        //     // detect end of message
+        //     if (recvline[n - 1] == '\n')
+        //     {
+        //         break;
+        //     }
+        //     memset(recvline, 0, MAX_LENGHT);
+        // }
+
+
+        if (n < 0){
+            error_and_kill("read error");
+            return NULL ; 
+         }
+
+        printf("below is from client--------------\n\n");
+        printf("%s\n", recvline);
+        // sending the response now
+        snprintf((char *)buff, sizeof(buff), "HTTP/1.0 200 OK \r\n\r\nHello there,Client!");
+        
+        //testing the multi - threadness of the server
+        sleep(5) ; 
+
+        write(connfd, (char *)buff, strlen((char *)buff));
+        close(connfd);
+        printf("\nclosing connection!\n");
+        return NULL ;
 }

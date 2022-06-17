@@ -6,7 +6,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#define PORT 8080
+#define PORT 18000
 using namespace std;
  
 int main(int argc, char const* argv[])

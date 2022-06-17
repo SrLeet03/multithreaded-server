@@ -1,7 +1,11 @@
 #!/bin/bash
 
-for N in {1..50}
+for N in {1..10}
 do
-    time ruby ./client/mainClient.rb &
+    #for ruby clients
+    time ruby ./client/mainClient.rb test_file
+    #cpp client
+    # ./client/client
+    #above will make concurrent connections with server with diffrent process.
 done
 wait
