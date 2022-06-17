@@ -19,11 +19,13 @@
 #include<stdlib.h>
 #include<netdb.h>
 
-#define SERVER_PORT 3000 
+#define SERVER_PORT 80 
 
 #define MAX_LENGHT 4096 // max length of reading data
 
 #define SA struct sockaddr
+
+using namespace std ; 
 
 
 void error_and_kill(const char *fmt , ...) ;
@@ -104,6 +106,7 @@ int main(int identity , char ** argc){
 
     //Normally  , we would like to retry unless return value is -1.
 
+     // this send above chracters over the network to the server
      if( write(sockfd , sendline , sendbytes ) != sendbytes ){
          error_and_kill("write error");
      }
@@ -114,6 +117,7 @@ int main(int identity , char ** argc){
     while ( ( n = read(sockfd , receiveline , MAX_LENGHT-1 ) ) > 0)
     {
         /* code */
+        cout<<"serever sends following response"<<endl;
         printf("%s" ,receiveline );
     }
 
