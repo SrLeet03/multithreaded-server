@@ -1,21 +1,33 @@
+
+//compilation : g++ -o ./server/tcpServer ./server/tcpServer.cpp
+               //g++ -pthread -o ./server/tcpServer ./server/tcpServer.cpp (when there are threads using in the programme)
+
+
 #include "common.h"
 #include <bits/stdc++.h>
 #include <pthread.h>
 
 
 #define SERVER_BACKLOG 1 // maxm connections allowable in the server  waiting  queue.
+#define THREAD_POOL_SIZE 20
+
+pthread_t thread_pool [THREAD_POOL_SIZE] ; 
+pthread_mutex_t mutex_lock  ; 
+
+
 
 using namespace std;
 
 void error_and_kill(const char *fmt, ...);
 
-void * handle_connection(void *connfd) ;
+void * handle_connection(int *connfd) ;
+void * thread_function(void *arg) ;
+queue<int*>client_connections ; 
+
 
 char *bin2hex(const unsigned char *input, size_t len);
 
-//compilation : g++ -o ./server/tcpServer ./server/tcpServer.cpp
-               //g++ -pthread -o ./server/tcpServer ./server/tcpServer.cpp (when there are threads using in the programme)
-               
+
 
 uint8_t buff[MAX_LENGHT + 1];
 uint8_t recvline[MAX_LENGHT + 1];
@@ -27,6 +39,16 @@ int main(int identity, char **argv)
     struct sockaddr_in server_address;
 
     int opt = 1;
+
+    // creating the multiple threads to handle the connections
+
+    for(int i=0 ; i<THREAD_POOL_SIZE ; i++){
+       pthread_create(&thread_pool[i] , NULL , thread_function , NULL );
+    }
+
+    if (pthread_mutex_init(&mutex_lock, NULL) != 0) {
+        error_and_kill("mutex init has failed");
+    }
 
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -81,15 +103,23 @@ int main(int identity, char **argv)
         //presentation format.
 
         printf("\nclient connection : %s\n" , client_address) ;
+         int *ptr = &client_socket ; 
 
-        // handle_connection(client_socket ) ; 
+        //  handle_connection(ptr ) ; 
 
        // creating the threads
-       pthread_t t ; 
+    //    pthread_t t ; 
 
        int *pclient = new int() ; 
+
        *pclient = client_socket ; 
-       pthread_create(&t , NULL , handle_connection , pclient) ;
+       pthread_mutex_lock(&mutex_lock) ; 
+
+       client_connections.push(pclient);
+
+       pthread_mutex_unlock(&mutex_lock) ; 
+
+    //    pthread_create(&t , NULL , handle_connection , pclient) ;
     }
 
     shutdown(listenfd, SHUT_RDWR);
@@ -123,15 +153,15 @@ void error_and_kill(const char *ch, ...)
 }
 
 
-void * handle_connection(void  *ptr_connfd){
+void * handle_connection(int  *ptr_connfd){
         // zero out the recive buffer to make it NULL terminated
         
-        int connfd = *((int*)(ptr_connfd)) ; 
+        int connfd = *(ptr_connfd) ; 
         // conv(ptr_connfd , connfd) ; 
 
         //We are casting it before deleting it.
-        delete[] (int*)ptr_connfd;
-
+        // delete[] (int*)ptr_connfd;
+        printf("in handle connection connfd %d\n" ,connfd) ; 
         memset(recvline, 0, MAX_LENGHT);
 
         // now read the client's message
@@ -167,4 +197,26 @@ void * handle_connection(void  *ptr_connfd){
         close(connfd);
         printf("\nclosing connection!\n");
         return NULL ;
+}
+
+void * thread_function(void *arg){
+
+    while (true)
+    {
+        if(client_connections.size() > 0){
+
+            pthread_mutex_lock(&mutex_lock) ; 
+
+            int* front_client =  client_connections.front() ; 
+            client_connections.pop() ; 
+
+            pthread_mutex_unlock(&mutex_lock) ; 
+
+
+            printf("front_client :  %d\n" , *front_client);
+
+            handle_connection(front_client);
+        }
+    }
+    
 }
