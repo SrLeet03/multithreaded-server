@@ -30,6 +30,6 @@
 // using namespace std ;
 // void error_and_kill(const char *fmt , ...) ;
 
-// char *bin2hex(const unsigned char * input  , size_t len) ;
+ char *bin2hex(const unsigned char * input  , size_t len) ;
 
 #endif

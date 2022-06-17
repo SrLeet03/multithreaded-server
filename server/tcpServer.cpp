@@ -66,7 +66,7 @@ int main(int identity, char **argv)
         connfd = accept(listenfd, (SA *) &client_addr, &client_addr_len);
         
         inet_ntop(AF_INET , &client_addr , client_address ,MAX_LENGHT) ; 
-        printf("client connection : %s" , client_address) ;
+        printf("\n\nclient connection : %s\n" , client_address) ;
         //inet_ntop function takes the address into network (bytes) format and convert it into the
         //presentation format.
 
@@ -132,24 +132,7 @@ void error_and_kill(const char *ch, ...)
     exit(1);
 }
 
-char *bin2hex(const unsigned char *input, size_t len)
-{
-    char *result;
-    const char *hexits = "0123456789ABCDEF";
-
-    if (input == NULL || len <= 0)
-    {
-        return NULL;
-    }
-    int resultLen = ((len * 3)) + 1;
-    malloc(resultLen);
-    bzero(result, resultLen);
-
-    for (int i = 0; i < len; i++)
-    {
-        result[i * 3] = hexits[input[i] >> 4];
-        result[i * 3 + 1] = hexits[input[i] & 0x0F];
-        result[i * 3 + 2] = ' '; // for readiblity
-    }
-    return result;
+void handle_connection(int client_socket){
+    char buffer[MAX_LENGHT+1]  ; 
+    
 }
