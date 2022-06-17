@@ -51,9 +51,11 @@ int main(int identity, char **argv)
 
     for (;;)
     {
-        struct sockaddr_in addr;
-        socklen_t addr_len;
+        struct sockaddr_in client_addr;
+        socklen_t client_addr_len;
+        char client_address[MAX_LENGHT+1] ; 
 
+        
         // accept block untill the new connection arives
         // it returns the "file descriptor to the connection"
 
@@ -61,7 +63,13 @@ int main(int identity, char **argv)
         printf("waiting for conection on PORT : %d\n", SERVER_PORT);
 
         fflush(stdout);
-        connfd = accept(listenfd, (SA *)NULL, NULL);
+        connfd = accept(listenfd, (SA *) &client_addr, &client_addr_len);
+        
+        inet_ntop(AF_INET , &client_addr , client_address ,MAX_LENGHT) ; 
+        printf("client connection : %s" , client_address) ;
+        //inet_ntop function takes the address into network (bytes) format and convert it into the
+        //presentation format.
+
 
         // zero out the recive buffer to make it NULL terminated
 
