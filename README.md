@@ -12,7 +12,8 @@ INTRODUCTION - This is a simple TCP client server A web server implemented in C+
    4.  Using accept(), connection is established between client and server, and they are ready to transfer data.
    5.  Then this connection is passed to request queue of the server
    6.  One of the thread from thread pool which is not working at the time will pick the front element of the    Req Queue and proceed the request.
-   7. Handle's cpu usage problem with thread condition variable and CPU critical section memory sharing problem with mutex lock ```
+   7. Handle's cpu usage problem with thread condition variable and CPU critical section memory sharing problem with mutex lock
+    ```
 
 ---
 
