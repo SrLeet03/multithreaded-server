@@ -19,7 +19,7 @@
 #include<stdlib.h>
 #include<netdb.h>
 
-#define SERVER_PORT 18000 
+#define SERVER_PORT 80 
 
 #define MAX_LENGHT 4096 // max length of reading data
 

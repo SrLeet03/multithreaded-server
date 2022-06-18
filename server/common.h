@@ -25,6 +25,8 @@
 
 #define MAX_LENGHT 4096 // max length of reading data
 
+#define SERVER_FILE_ROOT "/root/intern/garbage/multithreaded_server/static/sfiles/"
+
 #define SA struct sockaddr
 
 // using namespace std ;
