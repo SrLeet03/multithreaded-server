@@ -2,8 +2,9 @@
 
 INTRODUCTION - This is a simple TCP client server A web server implemented in C++ on a UNIX based platform so that it can serve multiple incoming client requests concurrently with minimum CPU's usage and thread pool.
 
+---
+
    **_SERVER FUNCTIONING_**
-   SERVER FUNCTIONING
    
    1.  Using socket(), create TCP socket. 
    2.  Using bind(), bind the socket to server address.
@@ -13,6 +14,7 @@ INTRODUCTION - This is a simple TCP client server A web server implemented in C+
    6.  One of the thread from thread pool which is not working at the time will pick the front element of the    Req Queue and proceed the request.
    7. Handle's cpu usage problem with thread condition variable and CPU critical section memory sharing problem with mutex lock
 
+---
 
 
 ##### change the permission bash script to make it exucutable
