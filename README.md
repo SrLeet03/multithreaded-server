@@ -2,6 +2,7 @@
 
 INTRODUCTION - This is a simple TCP client server A web server implemented in C++ on a UNIX based platform so that it can serve multiple incoming client requests concurrently with minimum CPU's usage and thread pool.
 
+   **_SERVER FUNCTIONING_**
    SERVER FUNCTIONING
    
    1.  Using socket(), create TCP socket. 
