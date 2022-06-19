@@ -23,7 +23,7 @@ Description - This is a simple TCP client server A web server implemented in C++
 
    ``` 1. Compile server :g++ -pthread -o ./server/tcpServer ./server/tcpServer.cpp ```<br/>
    ``` 2. Run server : ./server/tcpServer ```<br/>
-   ``` 3. For client  : you can make get request from your web browser itself. eg. localhost:18000/{filename.txt}/ ```<br/>
+   ``` 3. For client  : you can make get request from your web browser itself. eg. localhost:18000/ ```<br/>
    ``` And post request: eg. curl -i -X POST localhost:18000/{file_name_to_upload_on_server}.txt/ \ -H "Content-Type: text/xml" \ --data-binary "@{file_path_from_your_machine}" ```<br/>
    ``` 4. Or you can run the shell script also. Before running it make it exucatable.  i.e                         sudo chmod u+x multiClients.bash```<br/>
 
@@ -32,7 +32,8 @@ Description - This is a simple TCP client server A web server implemented in C++
    **_TECH STACK USED - C++ , Socket Programming and Computer Networks and multi-threading using:**
    
 
-   ``` <sys/types.h>-//Defines a collection of typedef symbols and structures```<br>                           ```<sys/socket.h>---//Declarations of socket constants, types, and   functions```<br>                                  
+   ``` <sys/types.h>-//Defines a collection of typedef symbols and structures```<br>                 
+   ```<sys/socket.h>---//Declarations of socket constants, types, and   functions```<br>                                  
    ```<netinet/in.h>---//Definitions for the internet protocol family   ```<br>                                          
    ```<arpa/inet.h>----//Definitions for internet operations    ```<br>                                                  
    ```<netdb.h>--------//Definitions for network database  operations```<br>                                             
@@ -41,24 +42,38 @@ Description - This is a simple TCP client server A web server implemented in C++
 
 ---
 
+**FUTURE GOALS OF THE PROJECT**
+- To transfer the secure data of file from one computer to another with the help of socket programming using client server architecture.
+- Implemet a event loop on server (async / io) to prevent it from attackers.
 
-##### change the permission bash script to make it exucutable
-###### sudo chmod u+x multiClients.bash
+---
+
+---
+
+**ADDITION TO THE ACM PROJECT**
+- Designed web server that can handle concurrency effectively.
+- Implemented a condition variable and request queue on server to make it better for handling request in async pro.
+- User can upload file or can get his file on server.
 
 
-###### Linux command to see the CPU's usage of the machine
-######## https://www.ibm.com/docs/en/linux-on-systems?topic=tools-top
+
+ **_Screenshots:**
+
+![Screenshot (111)](https://user-images.githubusercontent.com/59080732/174461096-5e11c47d-d2b6-4592-8a13-68f032890f1c.png) ![Screenshot (113)](https://user-images.githubusercontent.com/59080732/174461097-f3aa0f9d-eeac-4528-96a6-a34fad855b71.png)
 
 
+---
 
-Server
+**Linux command to see the CPU's usage of the machine**
+ https://www.ibm.com/docs/en/linux-on-systems?topic=tools-top
 
-curl -i -X POST localhost:18000/file-name.txt/ \
+
+---
+Server (to post file on the server) 
+
+- curl -i -X POST localhost:18000/file-name.txt/ \
   -H "Content-Type: text/xml" \
-  --data-binary "@/root/intern/garbage/multithreaded_server/static/cfiles/commands.txt"
+  --data-binary "@{file-path}"
 
+--- 
 
-Connects to the server over TCP/IP
-Retrieves and validates user input
-Displays results of each move in the console
-Very small memory footprint because the game logic is handled server-side
